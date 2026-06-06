@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 European Commission
+ * Copyright (c) 2025 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -39,11 +39,6 @@ protocol WalletKitConfig: Sendable {
    * User authentication required accessing core's secure storage
    */
   var userAuthenticationRequired: Bool { get }
-
-  /**
-   * KeyOptions for creating & accessing attestation keys
-   */
-  var keyOptions: KeyOptions? { get }
 
   /**
    * The name of the file to be created to store logs
@@ -91,14 +86,6 @@ struct WalletKitConfigImpl: WalletKitConfig {
     false
   }
 
-  var keyOptions: KeyOptions? {
-    KeyOptions(
-      curve: .P256,
-      secureAreaName: SecureEnclaveSecureArea.name,
-      accessControl: []
-    )
-  }
-
   var issuersConfig: [String: VciConfig] {
 
     let openId4VciConfigurations: [VciConfig] = {
@@ -111,8 +98,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
               clientId: "wallet-dev",
               keyAttestationsConfig: .init(walletAttestationsProvider: walletKitAttestationProvider),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              requirePAR: true,
-              requireDpop: true,
+              usePAR: true,
+              useDpopIfSupported: true,
               cacheIssuerMetadata: true
             ),
             order: 1
@@ -123,23 +110,11 @@ struct WalletKitConfigImpl: WalletKitConfig {
               clientId: "wallet-dev",
               keyAttestationsConfig: .init(walletAttestationsProvider: walletKitAttestationProvider),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              requirePAR: true,
-              requireDpop: true,
+              usePAR: true,
+              useDpopIfSupported: true,
               cacheIssuerMetadata: true
             ),
             order: 0
-          ),
-          // PingOne issuer — public client + PKCE, no attestation
-          .init(
-            config: .init(
-              credentialIssuerURL: "https://auth.pingone.com/f8942755-923b-4fb9-9744-102ac4fdeb72",
-              clientId: "d737fab4-0d56-4831-ae12-093473530e13",
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              usePAR: false,
-              useDpopIfSupported: false,
-              cacheIssuerMetadata: true
-            ),
-            order: 2
           )
         ]
       case .DEV:
@@ -150,8 +125,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
               clientId: "wallet-dev",
               keyAttestationsConfig: .init(walletAttestationsProvider: walletKitAttestationProvider),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              requirePAR: true,
-              requireDpop: true,
+              usePAR: true,
+              useDpopIfSupported: true,
               cacheIssuerMetadata: true
             ),
             order: 1
@@ -162,23 +137,11 @@ struct WalletKitConfigImpl: WalletKitConfig {
               clientId: "wallet-dev",
               keyAttestationsConfig: .init(walletAttestationsProvider: walletKitAttestationProvider),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              requirePAR: true,
-              requireDpop: true,
+              usePAR: true,
+              useDpopIfSupported: true,
               cacheIssuerMetadata: true
             ),
             order: 0
-          ),
-          // PingOne issuer — public client + PKCE, no attestation
-          .init(
-            config: .init(
-              credentialIssuerURL: "https://auth.pingone.com/f8942755-923b-4fb9-9744-102ac4fdeb72",
-              clientId: "d737fab4-0d56-4831-ae12-093473530e13",
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              usePAR: false,
-              useDpopIfSupported: false,
-              cacheIssuerMetadata: true
-            ),
-            order: 2
           )
         ]
       }
@@ -199,10 +162,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
   }
 
   var vpConfig: OpenId4VpConfiguration {
-    .init(
-      clientIdSchemes: [.x509SanDns, .x509Hash],
-      allowPresentingPartialClaims: true
-    )
+    .init(clientIdSchemes: [.x509SanDns, .x509Hash])
   }
 
   var trustedReaderRootCertificates: [x5chain] {
@@ -330,10 +290,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
 
 private extension WalletKitConfigImpl {
   func loadCertificate(_ name: String) -> SecCertificate? {
-    guard
-      let url = Bundle.main.url(forResource: name, withExtension: "der"),
-      let data = try? Data(contentsOf: url)
-    else { return nil }
+    guard let data = Data(name: name, ext: "der") else { return nil }
     return SecCertificateCreateWithData(nil, data as CFData)
   }
 }
