@@ -1,5 +1,5 @@
 {
-  "originHash" : "630f264ea7577898a606ae65602241cdd784282d1bc351dff4b0227054b43e1d",
+  "originHash" : "a7b9f2ff214a9443fb54c631b2a881792da18ab74f5dad090de30feb628de05f",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -263,6 +263,14 @@
       }
     },
     {
+      "identity" : "keyless.mobile-sdk",
+      "kind" : "registry",
+      "location" : "",
+      "state" : {
+        "version" : "5.8.7"
+      }
+    },
+    {
       "identity" : "pathkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kylef/PathKit.git",
@@ -285,8 +293,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PhoneNumberKit/PhoneNumberKit",
       "state" : {
-        "revision" : "52bd68dffa07ec7fc42b9851911c59e9d57fc906",
-        "version" : "5.0.0"
+        "revision" : "ebde4c008bad416588627d83ac07b991c204f72b",
+        "version" : "5.0.2"
       }
     },
     {
@@ -413,15 +421,6 @@
       "state" : {
         "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
         "version" : "602.0.0"
-      }
-    },
-    {
-      "identity" : "swift-zlib",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/beatt83/swift-zlib.git",
-      "state" : {
-        "revision" : "8cf51bfdf81c46702dac496d16397d92ac392532",
-        "version" : "1.0.2"
       }
     },
     {

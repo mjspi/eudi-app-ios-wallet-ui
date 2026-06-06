@@ -31,6 +31,10 @@ let package = Package(
     .package(
       name: "logic-test",
       path: "./logic-test"
+    ),
+    .package(
+      id: "keyless.mobile-sdk",
+      from: "5.8.7"
     )
   ],
   targets: [
@@ -40,7 +44,8 @@ let package = Package(
         "logic-core",
         "logic-business",
         "logic-resources",
-        "logic-analytics"
+        "logic-analytics",
+        .product(name: "KeylessSDK", package: "keyless.mobile-sdk")
       ],
       path: "./Sources"
     ),

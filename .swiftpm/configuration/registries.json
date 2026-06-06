@@ -1,0 +1,9 @@
+{
+  "registries" : {
+    "keyless" : {
+      "supportsAvailability" : false,
+      "url" : "https://swift.cloudsmith.io/keyless/partners/"
+    }
+  },
+  "version" : 1
+}
