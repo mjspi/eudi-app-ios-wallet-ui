@@ -135,8 +135,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
               credentialIssuerURL: "https://auth.pingone.com/f8942755-923b-4fb9-9744-102ac4fdeb72",
               clientId: "d737fab4-0d56-4831-ae12-093473530e13",
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              usePAR: false,
-              useDpopIfSupported: false,
+              requirePAR: false,
+              requireDpop: false,
               cacheIssuerMetadata: true
             ),
             order: 2
@@ -174,8 +174,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
               credentialIssuerURL: "https://auth.pingone.com/f8942755-923b-4fb9-9744-102ac4fdeb72",
               clientId: "d737fab4-0d56-4831-ae12-093473530e13",
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              usePAR: false,
-              useDpopIfSupported: false,
+              requirePAR: false,
+              requireDpop: false,
               cacheIssuerMetadata: true
             ),
             order: 2

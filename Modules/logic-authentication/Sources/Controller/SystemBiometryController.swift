@@ -48,6 +48,7 @@ public enum SystemBiometryError: Error, LocalizedError, Identifiable, Sendable {
 
 public protocol SystemBiometryController: Sendable {
   func getBiometryType() async -> LABiometryType
+  func isBiometryAvailable() async -> Bool
   func requestBiometricUnlock() async throws
   func openSettings(action: @escaping @Sendable () -> Void) async
 }
@@ -71,6 +72,10 @@ final actor SystemBiometryControllerImpl: SystemBiometryController {
 
   public func getBiometryType() async -> LABiometryType {
     context.biometryType
+  }
+
+  public func isBiometryAvailable() async -> Bool {
+    await getBiometryType() != .none
   }
 
   public func requestBiometricUnlock() async throws {

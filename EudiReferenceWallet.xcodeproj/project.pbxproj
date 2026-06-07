@@ -111,7 +111,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		9F8701D62F6BE5BC00A865A9 /* Exceptions for "EudiReferenceWalletIDProvider" folder in "EudiReferenceWalletIDProvider" target */ = {
+		9F8701D62F6BE5BC00A865A9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				WalletIdProvider.plist,
@@ -121,18 +121,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9F8701CA2F6BE5BC00A865A9 /* EudiReferenceWalletIDProvider */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				9F8701D62F6BE5BC00A865A9 /* Exceptions for "EudiReferenceWalletIDProvider" folder in "EudiReferenceWalletIDProvider" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = EudiReferenceWalletIDProvider;
-			sourceTree = "<group>";
-		};
+		9F8701CA2F6BE5BC00A865A9 /* EudiReferenceWalletIDProvider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9F8701D62F6BE5BC00A865A9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = EudiReferenceWalletIDProvider; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -482,9 +471,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = EudiReferenceWalletIDProvider/EudiReferenceWalletIDProvider.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Stylianos Tzouvaras (XA5F8Z3QP7)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Stylianos Tzouvaras (XA5F8Z3QP7)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -884,9 +872,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EudiWallet.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Stylianos Tzouvaras (XA5F8Z3QP7)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Stylianos Tzouvaras (XA5F8Z3QP7)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "Wallet/Preview\\ Content";
@@ -1164,9 +1151,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EudiWallet.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Stylianos Tzouvaras (XA5F8Z3QP7)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Stylianos Tzouvaras (XA5F8Z3QP7)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "Wallet/Preview\\ Content";
@@ -1216,13 +1202,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = EudiWallet.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution: Netcompany-Intrasoft S.A. (AZXQE7588Y)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution: Netcompany-Intrasoft S.A. (AZXQE7588Y)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "Wallet/Preview\\ Content";
-				DEVELOPMENT_TEAM = AZXQE7588Y;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = AZXQE7588Y;
+				DEVELOPMENT_TEAM = 6U3RF4C84N;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1248,8 +1232,7 @@
 				MARKETING_VERSION = yyyy.mm.v;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.europa.ec.euidi.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "EUDI Dev Release";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "EUDI Dev Release";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1274,7 +1257,7 @@
 				9F8701D52F6BE5BC00A865A9 /* Release Demo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release Demo";
+			defaultConfigurationName = "Debug Dev";
 		};
 		F14907B32ABAF54B00DDFE56 /* Build configuration list for PBXProject "EudiReferenceWallet" */ = {
 			isa = XCConfigurationList;
@@ -1285,7 +1268,7 @@
 				F0E39F532B7A678D00F162E9 /* Release Demo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release Demo";
+			defaultConfigurationName = "Debug Dev";
 		};
 		F14907DC2ABAF55000DDFE56 /* Build configuration list for PBXNativeTarget "EudiWallet" */ = {
 			isa = XCConfigurationList;
@@ -1296,7 +1279,7 @@
 				F0E39F542B7A678D00F162E9 /* Release Demo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release Demo";
+			defaultConfigurationName = "Debug Dev";
 		};
 /* End XCConfigurationList section */
 

@@ -29,6 +29,12 @@
 	<string>$(CHANGELOG_URL)</string>
 	<key>Core User Auth</key>
 	<string>$(CORE_USER_AUTH)</string>
+	<key>Keyless API Key</key>
+	<string>$(KEYLESS_API_KEY)</string>
+	<key>Keyless Hosts</key>
+	<string>$(KEYLESS_HOSTS)</string>
+	<key>Keyless User ID</key>
+	<string>$(KEYLESS_USER_ID)</string>
 	<key>Team ID</key>
 	<string>${DEVELOPMENT_TEAM}</string>
 </dict>

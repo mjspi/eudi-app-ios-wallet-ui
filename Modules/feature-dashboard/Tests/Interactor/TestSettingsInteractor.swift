@@ -81,10 +81,10 @@ final class TestSettingsInteractor: EudiTest {
     XCTAssertEqual(result, expectedUrl)
   }
 
-  func testIsBiometryAvailable_WhenDeviceSupportsFaceId_ThenReturnsTrue() async {
+  func testIsBiometryAvailable_WhenBiometryInteractorReturnsTrue_ThenReturnsTrue() async {
     // Given
     stub(biometryInteractor) { mock in
-      when(mock.getBiometryType()).thenReturn(.faceID)
+      when(mock.isBiometryAvailable()).thenReturn(true)
     }
 
     // When
@@ -94,10 +94,10 @@ final class TestSettingsInteractor: EudiTest {
     XCTAssertTrue(result)
   }
 
-  func testIsBiometryAvailable_WhenDeviceDoesNotSupportBiometry_ThenReturnsFalse() async {
+  func testIsBiometryAvailable_WhenBiometryInteractorReturnsFalse_ThenReturnsFalse() async {
     // Given
     stub(biometryInteractor) { mock in
-      when(mock.getBiometryType()).thenReturn(.none)
+      when(mock.isBiometryAvailable()).thenReturn(false)
     }
 
     // When
@@ -105,6 +105,19 @@ final class TestSettingsInteractor: EudiTest {
 
     // Then
     XCTAssertFalse(result)
+  }
+
+  func testIsBiometryAvailable_WhenPingOneRecognizeCase_ThenReturnsTrue() async {
+    // Given: PingOne Recognize controller returns isBiometryAvailable=true regardless of biometryType
+    stub(biometryInteractor) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
+    }
+
+    // When
+    let result = await interactor.isBiometryAvailable()
+
+    // Then
+    XCTAssertTrue(result)
   }
 
   func testIsBiometryEnabled_WhenBiometryInteractorReturnsEnabled_ThenReturnsTrue() async {

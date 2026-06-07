@@ -491,6 +491,17 @@ public class AuthenticationConfigStub:AuthenticationConfig, @unchecked Sendable 
 
 
 
+// MARK: - Mocks generated from file: '../Modules/logic-authentication/Sources/Config/PingOneRecognizeConfig.swift'
+
+import Cuckoo
+import Foundation
+@testable import logic_core
+@testable import logic_business
+@testable import logic_analytics
+@testable import logic_authentication
+
+
+
 // MARK: - Mocks generated from file: '../Modules/logic-authentication/Sources/Controller/PinStorageController.swift'
 
 import Cuckoo
@@ -840,6 +851,16 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
         )
     }
 
+    public func isBiometryAvailable() async -> Bool {
+        return await cuckoo_manager.call(
+            "isBiometryAvailable() async -> Bool",
+            parameters: (),
+            escapingParameters: (),
+            superclassCall: Cuckoo.MockManager.crashOnProtocolSuperclassCall(),
+            defaultCall: await __defaultImplStub!.isBiometryAvailable()
+        )
+    }
+
     public func requestBiometricUnlock() async throws {
         return try await cuckoo_manager.callThrows(
             "requestBiometricUnlock() async throws",
@@ -872,6 +893,14 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockSystemBiometryController.self,
                 method: "getBiometryType() async -> LABiometryType",
+                parameterMatchers: matchers
+            ))
+        }
+        
+        func isBiometryAvailable() -> Cuckoo.ProtocolStubFunction<(), Bool> {
+            let matchers: [Cuckoo.ParameterMatcher<Void>] = []
+            return .init(stub: cuckoo_manager.createStub(for: MockSystemBiometryController.self,
+                method: "isBiometryAvailable() async -> Bool",
                 parameterMatchers: matchers
             ))
         }
@@ -918,6 +947,18 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
         
         
         @discardableResult
+        func isBiometryAvailable() -> Cuckoo.__DoNotUse<(), Bool> {
+            let matchers: [Cuckoo.ParameterMatcher<Void>] = []
+            return cuckoo_manager.verify(
+                "isBiometryAvailable() async -> Bool",
+                callMatcher: callMatcher,
+                parameterMatchers: matchers,
+                sourceLocation: sourceLocation
+            )
+        }
+        
+        
+        @discardableResult
         func requestBiometricUnlock() -> Cuckoo.__DoNotUse<(), Void> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return cuckoo_manager.verify(
@@ -948,6 +989,10 @@ public class SystemBiometryControllerStub:SystemBiometryController, @unchecked S
     
     public func getBiometryType() async -> LABiometryType {
         return DefaultValueRegistry.defaultValue(for: (LABiometryType).self)
+    }
+    
+    public func isBiometryAvailable() async -> Bool {
+        return DefaultValueRegistry.defaultValue(for: (Bool).self)
     }
     
     public func requestBiometricUnlock() async throws {

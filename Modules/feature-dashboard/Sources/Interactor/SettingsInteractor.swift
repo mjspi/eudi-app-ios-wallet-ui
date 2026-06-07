@@ -63,7 +63,7 @@ final actor SettingsInteractorImpl: SettingsInteractor {
   }
 
   func isBiometryAvailable() async -> Bool {
-    await biometryInteractor.getBiometryType() != .none
+    await biometryInteractor.isBiometryAvailable()
   }
 
   func isBiometryEnabled() async -> Bool {

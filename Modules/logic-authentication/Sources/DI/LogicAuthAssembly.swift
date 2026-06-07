@@ -50,10 +50,9 @@ public final class LogicAuthAssembly: Assembly {
     }
     .inObjectScope(ObjectScope.graph)
 
-    container.register(SystemBiometryController.self) { r in
-      SystemBiometryControllerImpl(
-        keyChainController: r.force(KeyChainController.self)
-      )
+    container.register(SystemBiometryController.self) { _ in
+      let config = PingOneRecognizeConfig()
+      return PingOneRecognizeBiometryController(config: config)
     }
     .inObjectScope(ObjectScope.transient)
   }
