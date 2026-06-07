@@ -2992,6 +2992,21 @@ public class AuthenticationConfigStub:AuthenticationConfig, @unchecked Sendable 
 
 
 
+// MARK: - Mocks generated from file: '../Modules/logic-authentication/Sources/Config/PingOneRecognizeConfig.swift'
+
+import Cuckoo
+import Foundation
+@testable import logic_core
+@testable import logic_business
+@testable import logic_analytics
+@testable import logic_ui
+@testable import logic_api
+@testable import logic_authentication
+@testable import feature_common
+@testable import feature_proximity
+
+
+
 // MARK: - Mocks generated from file: '../Modules/logic-authentication/Sources/Controller/PinStorageController.swift'
 
 import Cuckoo
@@ -3458,6 +3473,7 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
                 sourceLocation: sourceLocation
             )
         }
+        
         
         @discardableResult
         func requestBiometricUnlock() -> Cuckoo.__DoNotUse<(), Void> {
