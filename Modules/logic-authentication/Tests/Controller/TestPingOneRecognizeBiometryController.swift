@@ -18,6 +18,26 @@ import XCTest
 @testable import logic_test
 @testable import logic_authentication
 
+// MARK: - Test double
+
+/// Drives `KeylessAuthenticating` from a test with a pre-wired result.
+///
+/// The result is captured as `Result<Void, Error>` so this conformer does not need
+/// to import `KeylessSDK` — the protocol intentionally avoids exposing SDK-specific
+/// types at its boundary.
+private final class StubKeylessAuthenticator: KeylessAuthenticating, @unchecked Sendable {
+
+  let stubbedResult: Result<Void, Error>
+
+  init(result: Result<Void, Error>) {
+    self.stubbedResult = result
+  }
+
+  func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+    onCompletion(stubbedResult)
+  }
+}
+
 final class TestPingOneRecognizeBiometryController: EudiTest {
 
   // MARK: - Helpers
@@ -27,6 +47,12 @@ final class TestPingOneRecognizeBiometryController: EudiTest {
     // PingOneRecognizeConfig reads from Bundle.main.infoDictionary.
     // In the test process, Keyless API Key is not set, so apiKey will be "".
     return PingOneRecognizeConfig()
+  }
+
+  /// A config with a non-empty apiKey — used to let execution reach the
+  /// `Keyless.authenticate` call so the injected test double can respond.
+  private func makeConfiguredConfig() -> PingOneRecognizeConfig {
+    PingOneRecognizeConfig(apiKey: "test-api-key", hosts: [])
   }
 
   // MARK: - getBiometryType
@@ -90,14 +116,45 @@ final class TestPingOneRecognizeBiometryController: EudiTest {
     }
   }
 
-  // MARK: - requestBiometricUnlock — Keyless SDK paths
-  //
-  // The success and SDK-failure paths (Keyless.authenticate() callback returning
-  // .success or .failure) cannot be unit-tested without calling the real Keyless
-  // SDK, which requires a configured server-side tenant and a device enrolled with
-  // PingOne Recognize. These paths are covered at the integration level (running
-  // the app against a real PingOne Recognize tenant). The pre-configure fast-fail
-  // path above confirms the withCheckedThrowingContinuation bridge is correct for
-  // the guard-exit branch; the continuation bridge itself is a standard Swift
-  // concurrency pattern with no logic to cover beyond what the SDK callback provides.
+  // MARK: - requestBiometricUnlock — Keyless SDK callback paths
+
+  func testRequestBiometricUnlock_WhenAuthenticatorSucceeds_DoesNotThrow() async {
+    // Given: config with a non-empty apiKey (passes the guard) and a stub that
+    // fires .success immediately — simulates the Keyless SDK returning a
+    // successful authentication result.
+    let stub = StubKeylessAuthenticator(result: .success(()))
+    let controller = PingOneRecognizeBiometryController(
+      config: makeConfiguredConfig(),
+      authenticator: stub
+    )
+
+    // When / Then: no error thrown
+    do {
+      try await controller.requestBiometricUnlock()
+    } catch {
+      XCTFail("Expected requestBiometricUnlock to succeed, got error: \(error)")
+    }
+  }
+
+  func testRequestBiometricUnlock_WhenAuthenticatorFails_ThrowsBiometricError() async {
+    // Given: config with a non-empty apiKey (passes the guard) and a stub that
+    // fires .failure — simulates the Keyless SDK returning an authentication error.
+    struct StubSDKError: Error {}
+    let stub = StubKeylessAuthenticator(result: .failure(StubSDKError()))
+    let controller = PingOneRecognizeBiometryController(
+      config: makeConfiguredConfig(),
+      authenticator: stub
+    )
+
+    // When / Then: throws SystemBiometryError.biometricError
+    do {
+      try await controller.requestBiometricUnlock()
+      XCTFail("Expected requestBiometricUnlock to throw when authenticator fails")
+    } catch let error as SystemBiometryError {
+      XCTAssertEqual(error, .biometricError,
+        "Expected .biometricError when Keyless SDK callback returns .failure, got \(error)")
+    } catch {
+      XCTFail("Unexpected error type: \(error)")
+    }
+  }
 }

@@ -17,6 +17,35 @@
 @preconcurrency import LocalAuthentication
 import KeylessSDK
 
+/// Abstraction over `Keyless.authenticate(configuration:onCompletion:)` that enables
+/// injection of a test double in unit tests.
+///
+/// The completion handler uses `Result<Void, Error>` rather than the SDK's concrete
+/// `Result<Keyless.AuthenticationSuccess, KeylessSDKError>`, and no `AuthConfig`
+/// parameter is exposed, so that conformers outside the `logic-authentication` module
+/// (such as test targets that do not link `KeylessSDK`) can implement the protocol
+/// without importing `KeylessSDK`.
+///
+/// The live implementation always passes `BiomAuthConfig()` to the SDK, matching
+/// the behaviour of the original direct call in `requestBiometricUnlock()`.
+protocol KeylessAuthenticating: Sendable {
+  func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void)
+}
+
+/// Live implementation that delegates directly to `Keyless.authenticate(...)`.
+struct LiveKeylessAuthenticator: KeylessAuthenticating {
+  func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+    Keyless.authenticate(configuration: BiomAuthConfig()) { result in
+      switch result {
+      case .success:
+        onCompletion(.success(()))
+      case .failure(let error):
+        onCompletion(.failure(error))
+      }
+    }
+  }
+}
+
 /// Calls `Keyless.configure()` once at app startup.
 ///
 /// This entry point lives in `logic-authentication` so that `AppDelegate` (which does not
@@ -38,9 +67,14 @@ public func configureKeylessSDK(with config: PingOneRecognizeConfig) {
 final actor PingOneRecognizeBiometryController: SystemBiometryController {
 
   private let config: PingOneRecognizeConfig
+  private let authenticator: any KeylessAuthenticating
 
-  init(config: PingOneRecognizeConfig) {
+  init(
+    config: PingOneRecognizeConfig,
+    authenticator: any KeylessAuthenticating = LiveKeylessAuthenticator()
+  ) {
     self.config = config
+    self.authenticator = authenticator
   }
 
   public func getBiometryType() async -> LABiometryType {
@@ -61,17 +95,14 @@ final actor PingOneRecognizeBiometryController: SystemBiometryController {
     }
 
     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-      Keyless.authenticate(
-        configuration: BiomAuthConfig(),
-        onCompletion: { result in
-          switch result {
-          case .success:
-            continuation.resume()
-          case .failure:
-            continuation.resume(throwing: SystemBiometryError.biometricError)
-          }
+      authenticator.authenticate { result in
+        switch result {
+        case .success:
+          continuation.resume()
+        case .failure:
+          continuation.resume(throwing: SystemBiometryError.biometricError)
         }
-      )
+      }
     }
   }
 }

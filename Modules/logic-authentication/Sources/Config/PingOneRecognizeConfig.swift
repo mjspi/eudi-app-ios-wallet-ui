@@ -29,4 +29,11 @@ public struct PingOneRecognizeConfig: Sendable {
       .map { $0.trimmingCharacters(in: .whitespaces) }
       .filter { !$0.isEmpty }
   }
+
+  /// Package-internal initializer for testing — injects explicit values without
+  /// reading from `Bundle.main.infoDictionary`.
+  init(apiKey: String, hosts: [String]) {
+    self.apiKey = apiKey
+    self.hosts = hosts
+  }
 }
