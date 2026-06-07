@@ -34,8 +34,14 @@ protocol KeylessAuthenticating: Sendable {
 
 /// Live implementation that delegates directly to `Keyless.authenticate(...)`.
 struct LiveKeylessAuthenticator: KeylessAuthenticating {
+  let externalUserId: String
+
   func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-    Keyless.authenticate(configuration: BiomAuthConfig()) { result in
+    let operationInfo = externalUserId.isEmpty
+      ? nil
+      : Keyless.OperationInfo(id: UUID().uuidString, externalUserId: externalUserId)
+    let authConfig = BiomAuthConfig(operationInfo: operationInfo)
+    Keyless.authenticate(configuration: authConfig) { result in
       switch result {
       case .success:
         onCompletion(.success(()))
@@ -71,10 +77,10 @@ final actor PingOneRecognizeBiometryController: SystemBiometryController {
 
   init(
     config: PingOneRecognizeConfig,
-    authenticator: any KeylessAuthenticating = LiveKeylessAuthenticator()
+    authenticator: (any KeylessAuthenticating)? = nil
   ) {
     self.config = config
-    self.authenticator = authenticator
+    self.authenticator = authenticator ?? LiveKeylessAuthenticator(externalUserId: config.externalUserId)
   }
 
   public func getBiometryType() async -> LABiometryType {

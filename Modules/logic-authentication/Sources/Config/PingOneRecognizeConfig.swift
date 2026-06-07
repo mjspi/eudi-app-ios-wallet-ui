@@ -20,6 +20,7 @@ public struct PingOneRecognizeConfig: Sendable {
 
   public let apiKey: String
   public let hosts: [String]
+  public let externalUserId: String
 
   public init() {
     self.apiKey = "Keyless API Key".valueFromBundle
@@ -28,12 +29,14 @@ public struct PingOneRecognizeConfig: Sendable {
       .split(separator: ";")
       .map { $0.trimmingCharacters(in: .whitespaces) }
       .filter { !$0.isEmpty }
+    self.externalUserId = "Keyless User ID".valueFromBundle
   }
 
   /// Package-internal initializer for testing — injects explicit values without
   /// reading from `Bundle.main.infoDictionary`.
-  init(apiKey: String, hosts: [String]) {
+  init(apiKey: String, hosts: [String], externalUserId: String = "") {
     self.apiKey = apiKey
     self.hosts = hosts
+    self.externalUserId = externalUserId
   }
 }

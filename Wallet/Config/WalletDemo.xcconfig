@@ -3,3 +3,4 @@ BUILD_VARIANT = DEMO
 CHANGELOG_URL =  https:/$()/github.com/eu-digital-identity-wallet/eudi-app-ios-wallet-ui/releases
 KEYLESS_API_KEY =
 KEYLESS_HOSTS =
+KEYLESS_USER_ID =

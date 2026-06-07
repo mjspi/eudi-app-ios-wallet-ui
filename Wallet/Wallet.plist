@@ -33,6 +33,8 @@
 	<string>$(KEYLESS_API_KEY)</string>
 	<key>Keyless Hosts</key>
 	<string>$(KEYLESS_HOSTS)</string>
+	<key>Keyless User ID</key>
+	<string>$(KEYLESS_USER_ID)</string>
 	<key>Team ID</key>
 	<string>${DEVELOPMENT_TEAM}</string>
 </dict>
