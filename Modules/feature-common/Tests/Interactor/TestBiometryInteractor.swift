@@ -135,11 +135,36 @@ final class TestBiometryInteractor: EudiTest {
     verify(prefsController).setValue(any(), forKey: Prefs.Key.biometryEnabled)
   }
   
+  // MARK: - isBiometryAvailable
+
+  func testIsBiometryAvailable_WhenControllerReturnsTrue_ThenReturnTrue() async {
+    // Given
+    stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
+    }
+    // When
+    let result = await interactor.isBiometryAvailable()
+    // Then
+    XCTAssertTrue(result)
+  }
+
+  func testIsBiometryAvailable_WhenControllerReturnsFalse_ThenReturnFalse() async {
+    // Given
+    stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(false)
+    }
+    // When
+    let result = await interactor.isBiometryAvailable()
+    // Then
+    XCTAssertFalse(result)
+  }
+
   // MARK: - getBiometricsImage
-  
+
   func testBiometricsImage_WhenControllerReturnsFaceIdType_ThenReturnFaceIdImage() async {
     // Given
     stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
       when(mock.getBiometryType()).thenReturn(.faceID)
     }
     // When
@@ -147,10 +172,11 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertEqual(biometryImage, Theme.shared.image.faceId)
   }
-  
+
   func testBiometricsImage_WhenControllerReturnsTouchIdType_ThenReturnTouchIdImage() async {
     // Given
     stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
       when(mock.getBiometryType()).thenReturn(.touchID)
     }
     // When
@@ -158,10 +184,11 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertEqual(biometryImage, Theme.shared.image.touchId)
   }
-  
+
   func testBiometricsImage_WhenControllerReturnsNotSupportedType_ThenReturnNil() async {
     // Given
     stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(false)
       when(mock.getBiometryType()).thenReturn(.none)
     }
     // When
@@ -169,9 +196,21 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertNil(biometryImage)
   }
-  
+
+  func testBiometricsImage_WhenPingOneRecognizeCase_ThenReturnFaceIdImage() async {
+    // Given: isBiometryAvailable true but getBiometryType returns .none (PingOne Recognize case)
+    stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
+      when(mock.getBiometryType()).thenReturn(.none)
+    }
+    // When
+    let biometryImage = await interactor.getBiometricsImage()
+    // Then
+    XCTAssertEqual(biometryImage, Theme.shared.image.faceId)
+  }
+
   // MARK: - getBiometryType
-  
+
   func testBiometricType_WhenControllerReturnsFaceIdType_ThenReturnFaceIdType() async {
     // Given
     stub(systemBiometricController) { mock in
@@ -182,7 +221,7 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertEqual(biometryType, .faceID)
   }
-  
+
   func testBiometricType_WhenControllerReturnsTouchIdType_ThenReturnTouchIdType() async {
     // Given
     stub(systemBiometricController) { mock in
@@ -193,12 +232,13 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertEqual(biometryType, .touchID)
   }
-  
+
   // MARK: - getBiometricsMethod
-  
+
   func testCurrentBiometricsMethod_WhenControllerReturnsFaceIdType_ThenReturnFaceIdStringLiteral() async {
     // Given
     stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
       when(mock.getBiometryType()).thenReturn(.faceID)
     }
     // When
@@ -206,10 +246,11 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertEqual(method, "Face ID")
   }
-  
+
   func testCurrentBiometricsMethod_WhenControllerReturnsTouchIdType_ThenReturnTouchIdStringLiteral() async {
     // Given
     stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
       when(mock.getBiometryType()).thenReturn(.touchID)
     }
     // When
@@ -217,16 +258,29 @@ final class TestBiometryInteractor: EudiTest {
     // Then
     XCTAssertEqual(method, "Touch ID")
   }
-  
+
   func testCurrentBiometricsMethod_WhenControllerReturnsNotSupportedType_ThenReturnEmptyString() async {
     // Given
     stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(false)
       when(mock.getBiometryType()).thenReturn(.none)
     }
     // When
     let method = await interactor.getBiometricsMethod()
     // Then
     XCTAssertEqual(method, "")
+  }
+
+  func testCurrentBiometricsMethod_WhenPingOneRecognizeCase_ThenReturnPingOneRecognizeString() async {
+    // Given: isBiometryAvailable true but getBiometryType returns .none (PingOne Recognize case)
+    stub(systemBiometricController) { mock in
+      when(mock.isBiometryAvailable()).thenReturn(true)
+      when(mock.getBiometryType()).thenReturn(.none)
+    }
+    // When
+    let method = await interactor.getBiometricsMethod()
+    // Then
+    XCTAssertEqual(method, "PingOne Recognize")
   }
   
   // MARK: - authenticate

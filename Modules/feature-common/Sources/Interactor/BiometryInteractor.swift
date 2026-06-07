@@ -30,6 +30,7 @@ public protocol BiometryInteractor: Sendable {
   func getBiometricsImage() async -> Image?
   func getBiometricsMethod() async -> String
   func getBiometryType() async -> LABiometryType
+  func isBiometryAvailable() async -> Bool
   func isBiometryEnabled() async -> Bool
   func setBiometrySelection(isEnabled: Bool) async
   func isPinValid(with pin: String) async -> QuickPinPartialState
@@ -68,18 +69,33 @@ final actor BiometryInteractorImpl: BiometryInteractor {
     await biometryController.getBiometryType()
   }
 
+  public func isBiometryAvailable() async -> Bool {
+    await biometryController.isBiometryAvailable()
+  }
+
   public func getBiometricsImage() async -> Image? {
-    switch await biometryController.getBiometryType() {
+    let available = await biometryController.isBiometryAvailable()
+    let biometryType = await biometryController.getBiometryType()
+    if available && biometryType == .none {
+      return Theme.shared.image.faceId
+    }
+    switch biometryType {
     case .faceID:
-      Theme.shared.image.faceId
+      return Theme.shared.image.faceId
     case .touchID:
-      Theme.shared.image.touchId
-    default: nil
+      return Theme.shared.image.touchId
+    default:
+      return nil
     }
   }
 
   public func getBiometricsMethod() async -> String {
-    switch await biometryController.getBiometryType() {
+    let available = await biometryController.isBiometryAvailable()
+    let biometryType = await biometryController.getBiometryType()
+    if available && biometryType == .none {
+      return "PingOne Recognize"
+    }
+    switch biometryType {
     case .faceID:
       return "Face ID"
     case .touchID:

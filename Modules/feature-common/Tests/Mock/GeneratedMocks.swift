@@ -194,6 +194,16 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
         )
     }
 
+    public func isBiometryAvailable() async -> Bool {
+        return await cuckoo_manager.call(
+            "isBiometryAvailable() async -> Bool",
+            parameters: (),
+            escapingParameters: (),
+            superclassCall: Cuckoo.MockManager.crashOnProtocolSuperclassCall(),
+            defaultCall: await __defaultImplStub!.isBiometryAvailable()
+        )
+    }
+
     public func isBiometryEnabled() async -> Bool {
         return await cuckoo_manager.call(
             "isBiometryEnabled() async -> Bool",
@@ -256,15 +266,15 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
 
     public struct __StubbingProxy_BiometryInteractor: Cuckoo.StubbingProxy {
         private let cuckoo_manager: Cuckoo.MockManager
-    
+
         public init(manager: Cuckoo.MockManager) {
             self.cuckoo_manager = manager
         }
-        
+
         var maxFailedPinAttempts: Cuckoo.ProtocolToBeStubbedReadOnlyProperty<MockBiometryInteractor,Int> {
             return .init(manager: cuckoo_manager, name: "maxFailedPinAttempts")
         }
-        
+
         func authenticate() -> Cuckoo.ProtocolStubFunction<(), BiometricsState> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -272,7 +282,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func openSettings<M1: Cuckoo.Matchable>(action p0: M1) -> Cuckoo.ProtocolStubNoReturnFunction<(@Sendable () -> Void)> where M1.MatchedType == @Sendable () -> Void {
             let matchers: [Cuckoo.ParameterMatcher<(@Sendable () -> Void)>] = [wrap(matchable: p0) { $0 }]
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -280,7 +290,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func getBiometricsImage() -> Cuckoo.ProtocolStubFunction<(), Image?> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -288,7 +298,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func getBiometricsMethod() -> Cuckoo.ProtocolStubFunction<(), String> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -296,7 +306,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func getBiometryType() -> Cuckoo.ProtocolStubFunction<(), LABiometryType> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -304,7 +314,15 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
+        func isBiometryAvailable() -> Cuckoo.ProtocolStubFunction<(), Bool> {
+            let matchers: [Cuckoo.ParameterMatcher<Void>] = []
+            return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
+                method: "isBiometryAvailable() async -> Bool",
+                parameterMatchers: matchers
+            ))
+        }
+
         func isBiometryEnabled() -> Cuckoo.ProtocolStubFunction<(), Bool> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -312,7 +330,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func setBiometrySelection<M1: Cuckoo.Matchable>(isEnabled p0: M1) -> Cuckoo.ProtocolStubNoReturnFunction<(Bool)> where M1.MatchedType == Bool {
             let matchers: [Cuckoo.ParameterMatcher<(Bool)>] = [wrap(matchable: p0) { $0 }]
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -320,7 +338,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func isPinValid<M1: Cuckoo.Matchable>(with p0: M1) -> Cuckoo.ProtocolStubFunction<(String), QuickPinPartialState> where M1.MatchedType == String {
             let matchers: [Cuckoo.ParameterMatcher<(String)>] = [wrap(matchable: p0) { $0 }]
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -328,7 +346,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func getPinLockoutState() -> Cuckoo.ProtocolStubFunction<(), PinLockoutState> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -336,7 +354,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func recordPinFailure() -> Cuckoo.ProtocolStubFunction<(), PinLockoutState> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -344,7 +362,7 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 parameterMatchers: matchers
             ))
         }
-        
+
         func resetPinThrottle() -> Cuckoo.ProtocolStubNoReturnFunction<()> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockBiometryInteractor.self,
@@ -358,18 +376,18 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
         private let cuckoo_manager: Cuckoo.MockManager
         private let callMatcher: Cuckoo.CallMatcher
         private let sourceLocation: Cuckoo.SourceLocation
-    
+
         public init(manager: Cuckoo.MockManager, callMatcher: Cuckoo.CallMatcher, sourceLocation: Cuckoo.SourceLocation) {
             self.cuckoo_manager = manager
             self.callMatcher = callMatcher
             self.sourceLocation = sourceLocation
         }
-        
+
         var maxFailedPinAttempts: Cuckoo.VerifyReadOnlyProperty<Int> {
             return .init(manager: cuckoo_manager, name: "maxFailedPinAttempts", callMatcher: callMatcher, sourceLocation: sourceLocation)
         }
-        
-        
+
+
         @discardableResult
         func authenticate() -> Cuckoo.__DoNotUse<(), BiometricsState> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
@@ -428,8 +446,20 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 sourceLocation: sourceLocation
             )
         }
-        
-        
+
+
+        @discardableResult
+        func isBiometryAvailable() -> Cuckoo.__DoNotUse<(), Bool> {
+            let matchers: [Cuckoo.ParameterMatcher<Void>] = []
+            return cuckoo_manager.verify(
+                "isBiometryAvailable() async -> Bool",
+                callMatcher: callMatcher,
+                parameterMatchers: matchers,
+                sourceLocation: sourceLocation
+            )
+        }
+
+
         @discardableResult
         func isBiometryEnabled() -> Cuckoo.__DoNotUse<(), Bool> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
@@ -440,8 +470,8 @@ public class MockBiometryInteractor: BiometryInteractor, Cuckoo.ProtocolMock, @u
                 sourceLocation: sourceLocation
             )
         }
-        
-        
+
+
         @discardableResult
         func setBiometrySelection<M1: Cuckoo.Matchable>(isEnabled p0: M1) -> Cuckoo.__DoNotUse<(Bool), Void> where M1.MatchedType == Bool {
             let matchers: [Cuckoo.ParameterMatcher<(Bool)>] = [wrap(matchable: p0) { $0 }]
@@ -532,27 +562,31 @@ public class BiometryInteractorStub:BiometryInteractor, @unchecked Sendable {
     public func getBiometryType() async -> LABiometryType {
         return DefaultValueRegistry.defaultValue(for: (LABiometryType).self)
     }
-    
+
+    public func isBiometryAvailable() async -> Bool {
+        return DefaultValueRegistry.defaultValue(for: (Bool).self)
+    }
+
     public func isBiometryEnabled() async -> Bool {
         return DefaultValueRegistry.defaultValue(for: (Bool).self)
     }
-    
+
     public func setBiometrySelection(isEnabled p0: Bool) async {
         return DefaultValueRegistry.defaultValue(for: (Void).self)
     }
-    
+
     public func isPinValid(with p0: String) async -> QuickPinPartialState {
         return DefaultValueRegistry.defaultValue(for: (QuickPinPartialState).self)
     }
-    
+
     public func getPinLockoutState() async -> PinLockoutState {
         return DefaultValueRegistry.defaultValue(for: (PinLockoutState).self)
     }
-    
+
     public func recordPinFailure() async -> PinLockoutState {
         return DefaultValueRegistry.defaultValue(for: (PinLockoutState).self)
     }
-    
+
     public func resetPinThrottle() async {
         return DefaultValueRegistry.defaultValue(for: (Void).self)
     }
@@ -2865,6 +2899,16 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
         )
     }
 
+    public func isBiometryAvailable() async -> Bool {
+        return await cuckoo_manager.call(
+            "isBiometryAvailable() async -> Bool",
+            parameters: (),
+            escapingParameters: (),
+            superclassCall: Cuckoo.MockManager.crashOnProtocolSuperclassCall(),
+            defaultCall: await __defaultImplStub!.isBiometryAvailable()
+        )
+    }
+
     public func requestBiometricUnlock() async throws {
         return try await cuckoo_manager.callThrows(
             "requestBiometricUnlock() async throws",
@@ -2888,11 +2932,11 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
 
     public struct __StubbingProxy_SystemBiometryController: Cuckoo.StubbingProxy {
         private let cuckoo_manager: Cuckoo.MockManager
-    
+
         public init(manager: Cuckoo.MockManager) {
             self.cuckoo_manager = manager
         }
-        
+
         func getBiometryType() -> Cuckoo.ProtocolStubFunction<(), LABiometryType> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockSystemBiometryController.self,
@@ -2900,7 +2944,15 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
                 parameterMatchers: matchers
             ))
         }
-        
+
+        func isBiometryAvailable() -> Cuckoo.ProtocolStubFunction<(), Bool> {
+            let matchers: [Cuckoo.ParameterMatcher<Void>] = []
+            return .init(stub: cuckoo_manager.createStub(for: MockSystemBiometryController.self,
+                method: "isBiometryAvailable() async -> Bool",
+                parameterMatchers: matchers
+            ))
+        }
+
         func requestBiometricUnlock() -> Cuckoo.ProtocolStubNoReturnThrowingFunction<(),Swift.Error> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
             return .init(stub: cuckoo_manager.createStub(for: MockSystemBiometryController.self,
@@ -2908,7 +2960,7 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
                 parameterMatchers: matchers
             ))
         }
-        
+
         func openSettings<M1: Cuckoo.Matchable>(action p0: M1) -> Cuckoo.ProtocolStubNoReturnFunction<(@Sendable () -> Void)> where M1.MatchedType == @Sendable () -> Void {
             let matchers: [Cuckoo.ParameterMatcher<(@Sendable () -> Void)>] = [wrap(matchable: p0) { $0 }]
             return .init(stub: cuckoo_manager.createStub(for: MockSystemBiometryController.self,
@@ -2922,14 +2974,14 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
         private let cuckoo_manager: Cuckoo.MockManager
         private let callMatcher: Cuckoo.CallMatcher
         private let sourceLocation: Cuckoo.SourceLocation
-    
+
         public init(manager: Cuckoo.MockManager, callMatcher: Cuckoo.CallMatcher, sourceLocation: Cuckoo.SourceLocation) {
             self.cuckoo_manager = manager
             self.callMatcher = callMatcher
             self.sourceLocation = sourceLocation
         }
-        
-        
+
+
         @discardableResult
         func getBiometryType() -> Cuckoo.__DoNotUse<(), LABiometryType> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
@@ -2940,8 +2992,20 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
                 sourceLocation: sourceLocation
             )
         }
-        
-        
+
+
+        @discardableResult
+        func isBiometryAvailable() -> Cuckoo.__DoNotUse<(), Bool> {
+            let matchers: [Cuckoo.ParameterMatcher<Void>] = []
+            return cuckoo_manager.verify(
+                "isBiometryAvailable() async -> Bool",
+                callMatcher: callMatcher,
+                parameterMatchers: matchers,
+                sourceLocation: sourceLocation
+            )
+        }
+
+
         @discardableResult
         func requestBiometricUnlock() -> Cuckoo.__DoNotUse<(), Void> {
             let matchers: [Cuckoo.ParameterMatcher<Void>] = []
@@ -2952,8 +3016,8 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
                 sourceLocation: sourceLocation
             )
         }
-        
-        
+
+
         @discardableResult
         func openSettings<M1: Cuckoo.Matchable>(action p0: M1) -> Cuckoo.__DoNotUse<(@Sendable () -> Void), Void> where M1.MatchedType == @Sendable () -> Void {
             let matchers: [Cuckoo.ParameterMatcher<(@Sendable () -> Void)>] = [wrap(matchable: p0) { $0 }]
@@ -2970,15 +3034,19 @@ public class MockSystemBiometryController: SystemBiometryController, Cuckoo.Prot
 public class SystemBiometryControllerStub:SystemBiometryController, @unchecked Sendable {
 
 
-    
+
     public func getBiometryType() async -> LABiometryType {
         return DefaultValueRegistry.defaultValue(for: (LABiometryType).self)
     }
-    
+
+    public func isBiometryAvailable() async -> Bool {
+        return DefaultValueRegistry.defaultValue(for: (Bool).self)
+    }
+
     public func requestBiometricUnlock() async throws {
         return DefaultValueRegistry.defaultValue(for: (Void).self)
     }
-    
+
     public func openSettings(action p0: @escaping @Sendable () -> Void) async {
         return DefaultValueRegistry.defaultValue(for: (Void).self)
     }
