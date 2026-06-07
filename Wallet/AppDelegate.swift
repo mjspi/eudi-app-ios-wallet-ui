@@ -30,6 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
 
+    // Initialize Keyless SDK before DI graph assembly and any biometric authentication
+    initializeKeyless()
+
     // Initialize Reporting
     initializeReporting()
 
@@ -50,6 +53,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     case UIApplication.ExtensionPointIdentifier.keyboard: return false
     default: return true
     }
+  }
+
+  private func initializeKeyless() {
+    configureKeylessSDK(with: PingOneRecognizeConfig())
   }
 
   private func initializeReporting() {

@@ -17,6 +17,24 @@
 @preconcurrency import LocalAuthentication
 import KeylessSDK
 
+/// Calls `Keyless.configure()` once at app startup.
+///
+/// This entry point lives in `logic-authentication` so that `AppDelegate` (which does not
+/// link `KeylessSDK` directly) can trigger SDK initialisation through the module's public API
+/// without needing a direct `import KeylessSDK`.
+///
+/// - Parameter config: The runtime `PingOneRecognizeConfig` read from `Bundle.main.infoDictionary`.
+///   When `config.apiKey` is empty the call is a no-op; `Keyless.configure()` is not invoked.
+public func configureKeylessSDK(with config: PingOneRecognizeConfig) {
+  guard !config.apiKey.isEmpty else { return }
+  let setupConfig = SetupConfig(apiKey: config.apiKey, hosts: config.hosts)
+  Keyless.configure(setupConfiguration: setupConfig) { _ in
+    // Errors are intentionally ignored here. If configure fails, biometric
+    // authentication will fail via SystemBiometryError.biometricError, triggering
+    // the existing PIN fallback in PingOneRecognizeBiometryController.
+  }
+}
+
 final actor PingOneRecognizeBiometryController: SystemBiometryController {
 
   private let config: PingOneRecognizeConfig
