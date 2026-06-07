@@ -1,6 +1,5 @@
 BUILD_TYPE = DEBUG
 BUILD_VARIANT = DEV
-KEYLESS_API_KEY =
-KEYLESS_HOSTS =
-
-KEYLESS_USER_ID =
+KEYLESS_API_KEY = 
+KEYLESS_HOSTS = https:$()/$()/auth.eks.core-production.saas-us-east.keyless.technology
+KEYLESS_USER_ID = 

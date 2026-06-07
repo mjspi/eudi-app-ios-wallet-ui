@@ -16,6 +16,9 @@
 
 @preconcurrency import LocalAuthentication
 import KeylessSDK
+import os.log
+
+private let keylessLogger = Logger(subsystem: "eudi.wallet", category: "PingOneRecognize")
 
 /// Abstraction over `Keyless.authenticate(configuration:onCompletion:)` that enables
 /// injection of a test double in unit tests.
@@ -30,9 +33,10 @@ import KeylessSDK
 /// the behaviour of the original direct call in `requestBiometricUnlock()`.
 protocol KeylessAuthenticating: Sendable {
   func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  func enroll(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void)
 }
 
-/// Live implementation that delegates directly to `Keyless.authenticate(...)`.
+/// Live implementation that delegates directly to `Keyless.authenticate(...)` and `Keyless.enroll(...)`.
 struct LiveKeylessAuthenticator: KeylessAuthenticating {
   let externalUserId: String
 
@@ -40,12 +44,37 @@ struct LiveKeylessAuthenticator: KeylessAuthenticating {
     let operationInfo = externalUserId.isEmpty
       ? nil
       : Keyless.OperationInfo(id: UUID().uuidString, externalUserId: externalUserId)
-    let authConfig = BiomAuthConfig(operationInfo: operationInfo)
+    let authConfig = BiomAuthConfig(
+      livenessConfiguration: .LEVEL_1,
+      operationInfo: operationInfo,
+      presentationStyle: .noCameraPreview
+    )
     Keyless.authenticate(configuration: authConfig) { result in
       switch result {
       case .success:
         onCompletion(.success(()))
       case .failure(let error):
+        keylessLogger.error("Keyless.authenticate() failed — \(error.localizedDescription, privacy: .public)")
+        onCompletion(.failure(error))
+      }
+    }
+  }
+
+  func enroll(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+    let operationInfo = externalUserId.isEmpty
+      ? nil
+      : Keyless.OperationInfo(id: UUID().uuidString, externalUserId: externalUserId)
+    let enrollConfig = BiomEnrollConfig(
+      operationInfo: operationInfo,
+      livenessConfiguration: .LEVEL_1,
+      presentationStyle: .fullScreen
+    )
+    Keyless.enroll(configuration: enrollConfig) { result in
+      switch result {
+      case .success:
+        onCompletion(.success(()))
+      case .failure(let error):
+        keylessLogger.error("Keyless.enroll() failed — \(error.localizedDescription, privacy: .public)")
         onCompletion(.failure(error))
       }
     }
@@ -61,12 +90,33 @@ struct LiveKeylessAuthenticator: KeylessAuthenticating {
 /// - Parameter config: The runtime `PingOneRecognizeConfig` read from `Bundle.main.infoDictionary`.
 ///   When `config.apiKey` is empty the call is a no-op; `Keyless.configure()` is not invoked.
 public func configureKeylessSDK(with config: PingOneRecognizeConfig) {
-  guard !config.apiKey.isEmpty else { return }
-  let setupConfig = SetupConfig(apiKey: config.apiKey, hosts: config.hosts)
-  Keyless.configure(setupConfiguration: setupConfig) { _ in
-    // Errors are intentionally ignored here. If configure fails, biometric
-    // authentication will fail via SystemBiometryError.biometricError, triggering
-    // the existing PIN fallback in PingOneRecognizeBiometryController.
+  guard !config.apiKey.isEmpty else {
+    print("[PingOneRecognize] configureKeylessSDK: apiKey is empty — skipping")
+    keylessLogger.warning("configureKeylessSDK: apiKey is empty — skipping Keyless.configure()")
+    return
+  }
+  print("[PingOneRecognize] configureKeylessSDK: apiKey=\(config.apiKey.prefix(8))… hosts=\(config.hosts)")
+  keylessLogger.info("configureKeylessSDK: configuring with hosts: \(config.hosts.joined(separator: ","), privacy: .public)")
+  let customLogs = CustomLogsConfiguration(
+    enabled: true,
+    logLevel: SetupConfig.DEFAULT_LOGGING_LEVEL,
+    callback: { event in
+      keylessLogger.debug("[KeylessSDK] \(event.eventType, privacy: .public)")
+    }
+  )
+  let setupConfig = SetupConfig(
+    apiKey: config.apiKey,
+    hosts: config.hosts,
+    customLogsConfiguration: customLogs
+  )
+  Keyless.configure(setupConfiguration: setupConfig) { error in
+    if let error {
+      print("[PingOneRecognize] Keyless.configure() FAILED: \(error)")
+      keylessLogger.error("configureKeylessSDK: Keyless.configure() failed — \(error.localizedDescription, privacy: .public)")
+    } else {
+      print("[PingOneRecognize] Keyless.configure() succeeded")
+      keylessLogger.info("configureKeylessSDK: Keyless.configure() succeeded")
+    }
   }
 }
 
@@ -96,16 +146,41 @@ final actor PingOneRecognizeBiometryController: SystemBiometryController {
   }
 
   public func requestBiometricUnlock() async throws {
-    guard !config.apiKey.isEmpty else {
+    let apiKey = config.apiKey
+    let userId = config.externalUserId
+    let auth = authenticator
+    guard !apiKey.isEmpty else {
+      keylessLogger.error("requestBiometricUnlock: apiKey is empty — failing immediately")
       throw SystemBiometryError.biometricError
     }
-
+    print("[PingOneRecognize] requestBiometricUnlock: isEnrolled=\(Keyless.isEnrolled) user=\(userId)")
+    keylessLogger.info("requestBiometricUnlock: isEnrolled=\(Keyless.isEnrolled) user=\(userId, privacy: .public)")
+    if !Keyless.isEnrolled {
+      print("[PingOneRecognize] not enrolled — starting enrollment")
+      keylessLogger.info("requestBiometricUnlock: not enrolled — starting enrollment")
+      try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        auth.enroll { result in
+          switch result {
+          case .success:
+            print("[PingOneRecognize] enrollment succeeded")
+            continuation.resume()
+          case .failure(let error):
+            print("[PingOneRecognize] enrollment FAILED: \(error)")
+            continuation.resume(throwing: SystemBiometryError.biometricError)
+          }
+        }
+      }
+    }
+    print("[PingOneRecognize] calling authenticate for user: \(userId)")
+    keylessLogger.info("requestBiometricUnlock: calling authenticate for user: \(userId, privacy: .public)")
     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-      authenticator.authenticate { result in
+      auth.authenticate { result in
         switch result {
         case .success:
+          print("[PingOneRecognize] authenticate succeeded")
           continuation.resume()
-        case .failure:
+        case .failure(let error):
+          print("[PingOneRecognize] authenticate FAILED: \(error)")
           continuation.resume(throwing: SystemBiometryError.biometricError)
         }
       }

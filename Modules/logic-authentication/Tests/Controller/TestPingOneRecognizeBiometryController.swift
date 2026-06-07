@@ -28,13 +28,19 @@ import XCTest
 private final class StubKeylessAuthenticator: KeylessAuthenticating, @unchecked Sendable {
 
   let stubbedResult: Result<Void, Error>
+  var enrollResult: Result<Void, Error>
 
-  init(result: Result<Void, Error>) {
+  init(result: Result<Void, Error>, enrollResult: Result<Void, Error>? = nil) {
     self.stubbedResult = result
+    self.enrollResult = enrollResult ?? result
   }
 
   func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
     onCompletion(stubbedResult)
+  }
+
+  func enroll(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+    onCompletion(enrollResult)
   }
 }
 

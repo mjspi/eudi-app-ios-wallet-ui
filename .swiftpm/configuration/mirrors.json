@@ -1,0 +1,8 @@
+{
+  "mirrors": [
+    {
+      "original": "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
+      "mirror": "https://github.com/mjspi/eudi-lib-ios-openid4vci-swift-p1.git"
+    }
+  ]
+}
