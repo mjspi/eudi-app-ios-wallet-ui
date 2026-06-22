@@ -16,6 +16,7 @@
 
 @preconcurrency import LocalAuthentication
 import KeylessSDK
+import logic_business
 import os.log
 
 private let keylessLogger = Logger(subsystem: "eudi.wallet", category: "PingOneRecognize")
@@ -39,15 +40,17 @@ protocol KeylessAuthenticating: Sendable {
 /// Live implementation that delegates directly to `Keyless.authenticate(...)` and `Keyless.enroll(...)`.
 struct LiveKeylessAuthenticator: KeylessAuthenticating {
   let externalUserId: String
+  let prefsController: (any PrefsController)?
 
   func authenticate(onCompletion: @escaping @Sendable (Result<Void, Error>) -> Void) {
     let operationInfo = externalUserId.isEmpty
       ? nil
       : Keyless.OperationInfo(id: UUID().uuidString, externalUserId: externalUserId)
+    let faceCaptureEnabled = prefsController?.getBool(forKey: .faceCaptureEnabled) ?? false
     let authConfig = BiomAuthConfig(
       livenessConfiguration: .LEVEL_1,
       operationInfo: operationInfo,
-      presentationStyle: .noCameraPreview
+      presentationStyle: faceCaptureEnabled ? .cameraPreview : .noCameraPreview
     )
     Keyless.authenticate(configuration: authConfig) { result in
       switch result {
@@ -127,10 +130,18 @@ final actor PingOneRecognizeBiometryController: SystemBiometryController {
 
   init(
     config: PingOneRecognizeConfig,
+    prefsController: (any PrefsController)? = nil,
     authenticator: (any KeylessAuthenticating)? = nil
   ) {
     self.config = config
-    self.authenticator = authenticator ?? LiveKeylessAuthenticator(externalUserId: config.externalUserId)
+    if let authenticator {
+      self.authenticator = authenticator
+    } else {
+      self.authenticator = LiveKeylessAuthenticator(
+        externalUserId: config.externalUserId,
+        prefsController: prefsController
+      )
+    }
   }
 
   public func getBiometryType() async -> LABiometryType {

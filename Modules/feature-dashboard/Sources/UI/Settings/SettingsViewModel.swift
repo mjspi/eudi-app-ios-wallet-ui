@@ -37,10 +37,20 @@ final class SettingsViewModel<Router: RouterHost>: ViewModel<Router, SettingsVie
     }
   }
 
+  var isFaceCaptureEnabled: Bool = false {
+    didSet {
+      guard !isHydratingFaceCapture, oldValue != isFaceCaptureEnabled else { return }
+      updateFaceCapture(isFaceCaptureEnabled)
+    }
+  }
+
   var biometryError: SystemBiometryError?
 
   @ObservationIgnored
   private var isHydratingBatchCounter = false
+
+  @ObservationIgnored
+  private var isHydratingFaceCapture = false
 
   private let interactor: SettingsInteractor
   private let walletKitController: WalletKitController
@@ -114,6 +124,11 @@ final class SettingsViewModel<Router: RouterHost>: ViewModel<Router, SettingsVie
     isBatchCounterEnabled = await interactor.isBatchCounterEnabled()
     isHydratingBatchCounter = false
 
+    let isPingOneConfigured = await interactor.isPingOneRecognizeConfigured()
+    isHydratingFaceCapture = true
+    isFaceCaptureEnabled = await interactor.isFaceCaptureEnabled()
+    isHydratingFaceCapture = false
+
     var items: [SettingMenuItemUIModel] = []
 
     if isBiometryAvailable {
@@ -132,6 +147,26 @@ final class SettingsViewModel<Router: RouterHost>: ViewModel<Router, SettingsVie
             guard let self else { return }
             self.setBiometryEnabled(!self.viewState.isBiometryEnabled)
           }
+        )
+      )
+    }
+
+    if isPingOneConfigured {
+      items.append(
+        .init(
+          title: .faceCaptureEnabled,
+          icon: Theme.shared.image.faceCapture,
+          showDivider: true,
+          isToggle: true,
+          toggleBinding: Binding(
+            get: { [weak self] in
+              self?.isFaceCaptureEnabled ?? false
+            },
+            set: { [weak self] newValue in
+              self?.isFaceCaptureEnabled = newValue
+            }
+          ),
+          action: {}
         )
       )
     }
@@ -188,6 +223,12 @@ final class SettingsViewModel<Router: RouterHost>: ViewModel<Router, SettingsVie
   private func updateBatchCounter(_ isEnabled: Bool) {
     Task {
       await interactor.setBatchCounter(isEnabled: isEnabled)
+    }
+  }
+
+  private func updateFaceCapture(_ isEnabled: Bool) {
+    Task {
+      await interactor.setFaceCaptureEnabled(isEnabled: isEnabled)
     }
   }
 }

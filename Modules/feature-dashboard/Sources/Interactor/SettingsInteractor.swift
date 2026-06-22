@@ -29,6 +29,9 @@ public protocol SettingsInteractor: Sendable {
   func openBiometrySettings(action: @escaping @Sendable () -> Void) async
   func setBatchCounter(isEnabled: Bool) async
   func isBatchCounterEnabled() async -> Bool
+  func setFaceCaptureEnabled(isEnabled: Bool) async
+  func isFaceCaptureEnabled() async -> Bool
+  func isPingOneRecognizeConfigured() async -> Bool
 }
 
 final actor SettingsInteractorImpl: SettingsInteractor {
@@ -88,5 +91,18 @@ final actor SettingsInteractorImpl: SettingsInteractor {
 
   func setBatchCounter(isEnabled: Bool) async {
     prefsController.setValue(isEnabled, forKey: .batchCounter)
+  }
+
+  func isFaceCaptureEnabled() async -> Bool {
+    prefsController.getBool(forKey: .faceCaptureEnabled)
+  }
+
+  func setFaceCaptureEnabled(isEnabled: Bool) async {
+    prefsController.setValue(isEnabled, forKey: .faceCaptureEnabled)
+  }
+
+  func isPingOneRecognizeConfigured() async -> Bool {
+    let apiKey = Bundle.main.infoDictionary?["Keyless API Key"] as? String ?? ""
+    return !apiKey.isEmpty
   }
 }
