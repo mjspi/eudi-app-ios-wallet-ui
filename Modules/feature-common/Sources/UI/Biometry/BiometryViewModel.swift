@@ -33,6 +33,7 @@ struct BiometryState: ViewState {
   let contentHeaderConfig: ContentHeaderConfig
   let isLockedOut: Bool
   let lockoutMessage: LocalizableStringKey?
+  let showPinFallback: Bool
 }
 
 @Observable
@@ -94,7 +95,8 @@ final class BiometryViewModel<Router: RouterHost>: ViewModel<Router, BiometrySta
           )
         ),
         isLockedOut: false,
-        lockoutMessage: nil
+        lockoutMessage: nil,
+        showPinFallback: false
       )
     )
 
@@ -146,9 +148,15 @@ final class BiometryViewModel<Router: RouterHost>: ViewModel<Router, BiometrySta
       case .failure(let error):
         if error != .biometricError {
           self.biometryError = error
+        } else {
+          setState { $0.copy(showPinFallback: true) }
         }
       }
     }
+  }
+
+  func onUsePinFallback() {
+    setState { $0.copy(showPinFallback: true) }
   }
 
   func onSettings() {

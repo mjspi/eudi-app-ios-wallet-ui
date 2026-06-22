@@ -42,7 +42,8 @@ struct BiometryView<Router: RouterHost>: View {
       content(
         viewState: viewModel.viewState,
         uiPinInputField: $viewModel.uiPinInputField,
-        onBiometry: viewModel.onBiometry
+        onBiometry: viewModel.onBiometry,
+        onUsePinFallback: viewModel.onUsePinFallback
       )
       .alert(item: $viewModel.biometryError) { error in
         Alert(
@@ -75,7 +76,8 @@ struct BiometryView<Router: RouterHost>: View {
 private func content(
   viewState: BiometryState,
   uiPinInputField: Binding<String>,
-  onBiometry: @escaping () -> Void
+  onBiometry: @escaping () -> Void,
+  onUsePinFallback: @escaping () -> Void
 ) -> some View {
 
   if viewState.config.displayLogo {
@@ -98,28 +100,53 @@ private func content(
 
   VSpacer.small()
 
-  pinView(
-    pinTitle: biometryPinTitle(viewState: viewState),
-    uiPinInputField: uiPinInputField,
-    quickPinSize: viewState.quickPinSize,
-    areBiometricsEnabled: viewState.areBiometricsEnabled,
-    pinError: viewState.pinError,
-    isLockedOut: viewState.isLockedOut,
-    lockoutMessage: viewState.lockoutMessage
-  )
+  if viewState.areBiometricsEnabled && !viewState.showPinFallback {
+    biometricPromptView(
+      biometryImage: viewState.biometryImage,
+      onBiometry: onBiometry,
+      onUsePinFallback: onUsePinFallback
+    )
+  } else {
+    pinView(
+      pinTitle: biometryPinTitle(viewState: viewState),
+      uiPinInputField: uiPinInputField,
+      quickPinSize: viewState.quickPinSize,
+      areBiometricsEnabled: viewState.areBiometricsEnabled,
+      pinError: viewState.pinError,
+      isLockedOut: viewState.isLockedOut,
+      lockoutMessage: viewState.lockoutMessage
+    )
 
+    Spacer()
+  }
+}
+
+@MainActor
+@ViewBuilder
+private func biometricPromptView(
+  biometryImage: Image?,
+  onBiometry: @escaping () -> Void,
+  onUsePinFallback: @escaping () -> Void
+) -> some View {
   Spacer()
 
-  if viewState.areBiometricsEnabled, let image = viewState.biometryImage {
-    HStack {
-      Spacer()
+  VStack(spacing: Theme.shared.dimension.padding) {
+    if let image = biometryImage {
       image
-        .onTapGesture {
-          onBiometry()
-        }
+        .resizable()
+        .scaledToFit()
+        .frame(width: 64, height: 64)
+        .onTapGesture { onBiometry() }
     }
-    .padding(.horizontal)
+
+    Button(action: onUsePinFallback) {
+      Text(.biometryUsePinFallback)
+        .typography(Theme.shared.font.bodyMedium)
+        .foregroundColor(Theme.shared.color.blue)
+    }
   }
+
+  Spacer()
 }
 
 @MainActor
@@ -165,7 +192,7 @@ private func pinView(
       numericText: uiPinInputField,
       maxDigits: quickPinSize,
       isSecureEntry: true,
-      canFocus: .constant(!areBiometricsEnabled && !isLockedOut),
+      canFocus: .constant(!isLockedOut),
       shouldUseFullScreen: true,
       hasError: hasError,
       isDisabled: isLockedOut
@@ -220,13 +247,15 @@ private func pinView(
       )
     ),
     isLockedOut: false,
-    lockoutMessage: nil
+    lockoutMessage: nil,
+    showPinFallback: false
   )
 
   ContentScreenView {
     content(
       viewState: viewState,
       uiPinInputField: .constant("uiPinInputField"),
-      onBiometry: {})
+      onBiometry: {},
+      onUsePinFallback: {})
   }
 }

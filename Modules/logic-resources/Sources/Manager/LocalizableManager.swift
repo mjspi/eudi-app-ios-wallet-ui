@@ -522,12 +522,16 @@ final class LocalizableManager: LocalizableManagerType {
       bundle.localizedString(forKey: "document_details_issuer_card_issued_action_btn_text")
     case .batchIssuanceCounter:
       bundle.localizedString(forKey: "batch_issuance_counter")
+    case .faceCaptureEnabled:
+      bundle.localizedString(forKey: "face_capture_enabled")
     case .documentProviderExtensionAcceptButton:
       bundle.localizedString(forKey: "document_provider_extension_accept_button")
     case .documentProviderExtensionRejectButton:
       bundle.localizedString(forKey: "document_provider_extension_reject_button")
     case .enterYourPin:
       bundle.localizedString(forKey: "enter_your_pin")
+    case .biometryUsePinFallback:
+      bundle.localizedString(forKey: "biometry_use_pin_fallback")
     }
   }
 }

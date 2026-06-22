@@ -133,6 +133,17 @@
         }
       }
     },
+    "face_capture_enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face Capture UI"
+          }
+        }
+      }
+    },
     "batch_issuance_counter" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -770,6 +781,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "End date"
+          }
+        }
+      }
+    },
+    "biometry_use_pin_fallback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use PIN instead"
           }
         }
       }

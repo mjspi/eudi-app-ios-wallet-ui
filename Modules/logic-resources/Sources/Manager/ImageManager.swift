@@ -73,6 +73,7 @@ public protocol ImageManagerProtocol: Sendable {
   var copy: Image { get }
   var changePin: Image { get }
   var batchCounter: Image { get }
+  var faceCapture: Image { get }
   var retrieveLogs: Image { get }
   var changelog: Image { get }
 }
@@ -137,6 +138,7 @@ final class ImageManager: ImageManagerProtocol {
     case copy = "doc.on.doc"
     case changePin = "123.rectangle"
     case batchCounter = "number"
+    case faceCapture = "camera.metering.center.weighted"
     case retrieveLogs = "arrow.up.forward.square"
     case changelog = "clock.arrow.trianglehead.2.counterclockwise.rotate.90"
   }
@@ -320,6 +322,9 @@ final class ImageManager: ImageManagerProtocol {
   }
   var batchCounter: Image {
     Image(systemName: ImageEnum.batchCounter.rawValue)
+  }
+  var faceCapture: Image {
+    Image(systemName: ImageEnum.faceCapture.rawValue)
   }
   var retrieveLogs: Image {
     Image(systemName: ImageEnum.retrieveLogs.rawValue)
