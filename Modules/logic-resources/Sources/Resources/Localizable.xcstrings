@@ -73,7 +73,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identify yourself to a wide range of public and private online services while protecting your privacy. Prove who you are with just a few taps — no need to manage countless passwords."
+            "value" : "Identify yourself to a wide range of public and private online services while protecting your privacy. Prove who you are with just a few taps."
           }
         }
       }
@@ -128,7 +128,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Authenticate, authorise transactions and share your digital documentsin person or online."
+            "value" : "Authenticate, authorise transactions and share your digital documents in person or online."
           }
         }
       }
@@ -766,7 +766,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Electronically sign digital documents with your wallet by choosing a file from your device."
+            "value" : "Electronically sign digital documents with your wallet by choosing a file from your device or by scanning a QR code."
           }
         }
       }
@@ -1630,7 +1630,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter a 6-digit PIN"
+            "value" : "Type a PIN"
           }
         }
       }
@@ -1674,7 +1674,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your Waller is ready for use."
+            "value" : "Your Wallet is ready for use."
           }
         }
       }
@@ -1707,7 +1707,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Re-type your PIN"
+            "value" : "Confirm PIN"
           }
         }
       }

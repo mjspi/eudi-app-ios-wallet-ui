@@ -104,7 +104,7 @@ The minimum set of changes for a full rebrand. Each row links to its detailed se
 | Override system/semantic colors | Add a colorset named exactly after the role (e.g. `background`, `primaryLabel`) | Catalog entry wins over the system color. See [Colors](#colors). |
 | Fonts | Drop font files into [`logic-resources/Sources/Resources/`](../Modules/logic-resources/Sources/Resources) + add `WalletFontConfig.plist` | Default is the **system font**. See [Typography and fonts](#typography-and-fonts). |
 | Corner shapes | [`ShapeManager.swift`](../Modules/logic-resources/Sources/Manager/ShapeManager.swift) | See [Shapes](#shapes). |
-| In-app logos | Replace imagesets in [`Images.xcassets`](../Modules/logic-resources/Sources/Resources/Images.xcassets) (`logo`, `EUDI-text`, …) | Keep the imageset names. See [Logos](#logos-and-in-app-imagery). |
+| In-app logos | Replace imagesets in [`Images.xcassets`](../Modules/logic-resources/Sources/Resources/Images.xcassets) (`logo-eu-digital-indentity-wallet`, …) | Keep the imageset names. See [Logos](#logos-and-in-app-imagery). |
 | App icon | [`Wallet/Assets.xcassets`](../Wallet/Assets.xcassets) — `AppIcon` **and** `AppIconDev` | One per variant. See [App icon](#app-icon). |
 | App display name | `INFOPLIST_KEY_CFBundleDisplayName` in `project.pbxproj` | "EUDI Wallet" by default. See [App name](#app-name-and-bundle-identity). |
 | Bundle id | `PRODUCT_BUNDLE_IDENTIFIER` in `project.pbxproj` | Don't change after public release. Keep the extension id aligned. |
@@ -135,6 +135,37 @@ The three groups:
 > **Two separators.** `separator` is a **brand** color (always from the catalog); `opaqueSeparator`
 > is a **semantic** role (falls back to the UIKit separator). The visible hairline dividers across the
 > UI use `separator`, so edit that one to recolor dividers.
+
+### Navigation bar title color (`navigationBarColorScheme`)
+
+The navigation bar renders its **title and bar-button items** in either light or dark *content*. By
+default iOS picks this from the system light/dark setting — which means with a **dark-toned
+`background` in light mode** the title would come out black and disappear against your color. To control
+this, the theme exposes one appearance setting alongside the color roles:
+
+```swift
+// ColorManagerProtocol
+var navigationBarColorScheme: ColorScheme? { get }   // nil = system default
+```
+
+It is set where the theme is configured, in
+[`ThemeConfiguration`](../Modules/logic-resources/Sources/Manager/ThemeConfiguration.swift):
+
+```swift
+self.color = color ?? ColorManager(bundle: .assetsBundle, navigationBarColorScheme: .dark)
+```
+
+| Value | Effect |
+| --- | --- |
+| `nil` | **System default** — the bar follows light/dark mode automatically (use this for a light theme). |
+| `.dark` | Forces **light** title/buttons — pair with a **dark** `background`. |
+| `.light` | Forces **dark** title/buttons — pair with a **light** `background`. |
+
+[`ContentScreenView`](../Modules/logic-ui/Sources/DesignSystem/Component/Content/ContentScreenView.swift)
+applies this to every screen, so setting it once covers the whole app. A single screen can override it
+with the `toolbarColorScheme:` parameter (an explicit value wins over the theme; otherwise the theme
+value is used). Match this to your `background`: a dark palette uses `.dark`, a light palette leaves it
+`nil`.
 
 ### The override mechanism
 
@@ -305,9 +336,8 @@ The brand logos and key illustrations (bundled imagesets):
 
 | `ImageManager` role | Imageset | Where it appears |
 | --- | --- | --- |
-| `logo` | `logo` (`ic-logo-2.svg`) | [Splash screen](#splash-screen) and content headers |
-| `euditext` | `EUDI-text` | Wordmark next to the logo |
-| `logoEuDigitalIndentityWallet` | `logo-eu-digital-indentity-wallet` | Branded headers |
+| `logo` | `logo` (`ic-logo-2.svg`) | [Splash screen](#splash-screen) |
+| `logoEuDigitalIndentityWallet` | `logo-eu-digital-indentity-wallet` | Branded headers (combined icon + wordmark) |
 | `homeIdentity`, `homeContract`, `successSecuredWallet`, `digitalIdIssuance`, `chooseDocumentImage`, `scanDocumentImage`, … | matching imagesets | Onboarding / dashboard / success illustrations |
 
 ### How to swap them
@@ -511,7 +541,7 @@ Android's `ThemeManager.Builder`, and is intentionally left at `.default` in the
 * [ ] Light **and** dark appearances set for every brand colorset and every system/semantic override.
 * [ ] `accent` colorset added (and the app-target `AccentColor` filled in).
 * [ ] Text/background color pairs meet contrast guidance (WCAG AA: 4.5:1 for body text).
-* [ ] All brand imagesets replaced (`logo`, `EUDI-text`, illustrations); no leftover EUDI artwork.
+* [ ] All brand imagesets replaced (`logo`, `logo-eu-digital-indentity-wallet`, illustrations); no leftover EUDI artwork.
 * [ ] App icon replaced for **every** variant (`AppIcon` and `AppIconDev`); legible at small sizes.
 * [ ] App display name set; localized if you ship multiple locales.
 * [ ] Brand strings in `Localizable.xcstrings` reviewed (onboarding, side menu, auth prompts).
